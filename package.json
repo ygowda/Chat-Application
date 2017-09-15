@@ -1,0 +1,17 @@
+{
+  "name": "socket.io_chat",
+  "version": "1.0.0",
+  "description": "a simple chat application using socket.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yashus",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.4",
+    "google-translate": "^2.0.5",
+    "node-emoji": "^1.8.1",
+    "socket.io": "^2.0.3"
+  }
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <style>
+              form { padding: 3px; position: fixed; bottom: 0;}
+              body{
+                background-image: url('background_numbers.jpg');
+                color: white;
+                font-size: 200%;
+                font-style: italic;
+                font-family: Arial, Helvetica, sans-serif;
+              }
+              ul{
+                list-style-type: none;
+               }
+
+        </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <div class="input-group">
+        <input id="input" class="form-control"/>
+        <span class="input-group-btn">
+          <button class="btn btn-success">Send</button>
+        </span>
+    </div>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+
+      $(function () {
+        var socket = io();
+        $('form').submit(function(){
+          socket.emit('chat message', $('#input').val());
+          $('#input').val('');
+          return false;
+        });
+        socket.on('chat message', function(msg){
+          $('#messages').append($('<li>').text(msg));
+        });
+      });
+    </script>
+  </body>
+</html>
