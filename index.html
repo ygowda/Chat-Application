@@ -4,9 +4,10 @@
     <title>Socket.IO chat</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <style>
-              form { padding: 3px; position: fixed; bottom: 0;}
+              .message-form { padding: 3px; position: fixed; bottom: 0;}
               body{
-                background-image: url('background_numbers.jpg');
+/*                visibility: hidden;
+*/                background-image: url('background_numbers.jpg');
                 color: white;
                 font-size: 200%;
                 font-style: italic;
@@ -15,18 +16,21 @@
               ul{
                 list-style-type: none;
                }
+               .welcome-screen{
+                  visibility: hidden;
+               }
 
         </style>
   </head>
   <body>
     <ul id="messages"></ul>
-    <form action="">
-      <div class="input-group">
-        <input id="input" class="form-control"/>
-        <span class="input-group-btn">
-          <button class="btn btn-success">Send</button>
-        </span>
-    </div>
+    <form class="message-form">
+        <div class="input-group">
+            <input id="input" class="form-control"/>
+            <span class="input-group-btn">
+                <button class="btn btn-success">Send</button>
+            </span>
+        </div>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -35,7 +39,7 @@
 
       $(function () {
         var socket = io();
-        $('form').submit(function(){
+        $('.message-form').submit(function(){
           socket.emit('chat message', $('#input').val());
           $('#input').val('');
           return false;
@@ -43,6 +47,12 @@
         socket.on('chat message', function(msg){
           $('#messages').append($('<li>').text(msg));
         });
+
+        // //but where is socket sending the data out to?
+        // socket.on('news', function (data) {
+        //     console.log(data);
+        //     socket.emit('my other event', { my: 'data' });
+        // });
       });
     </script>
   </body>
