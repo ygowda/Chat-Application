@@ -16,12 +16,16 @@
 			background: transparent;
 			text-align: center;
 			font-size: 20px;
+			display: inline-block;
 		}
 		.welcome-screen{
+			position: relative;
+			top: 50%;
+			transform: translateY(100%);
 			font-size: 60px;
+			text-align: center;
 
 		}
-
 
 	</style> 
 </head> 
@@ -30,9 +34,12 @@
 
 	<div class="welcome-screen">
 		Please provide a username...
-        <form id="form-input" action="/homepage" method="post" onsubmit="validateInput()"> 
+<!-- 		        <form id="form-input" action="/homepage" method="post" onsubmit="validateInput()"> 
+ -->
+        <form id="form-input"  action="/" onsubmit="validateInput()"> 
           <input id="username-input" type="text" name="user[name]"/> 
-        </form> 
+<!--           <select class="form-control"><option>default</option></select>
+ -->        </form> 
     </div>
 
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -40,16 +47,23 @@
 
 <script> 
 
-      // function validateInput(){
-      // 	console.log('hi');
-      //   var x = $('#username-input').val();
-      //   if(x==''){
-      //     alert("Please enter a valid username");
-      //   }
-      //   else{
+      function validateInput(){
+        	console.log('hi');
+        var x = $('#username-input').val();
+        if(x==''){
+          alert("Please enter a valid username");
+        }
+        else{
+        	$('form').attr('action', '/homepage');
 
-      //   }
-      // }
+        	$('form').attr('method', 'post');
+
+        	$(".welcome-screen").fadeOut('fast', function(){
+        		console.log("you just submitted the form");
+        	});
+
+        }
+      }
 
 </script>
 

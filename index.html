@@ -4,34 +4,79 @@
     <title>Socket.IO chat</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <style>
-              .message-form { padding: 3px; position: fixed; bottom: 0;}
-              body{
-/*                visibility: hidden;
-*/                background-image: url('background_numbers.jpg');
-                color: white;
-                font-size: 200%;
-                font-style: italic;
-                font-family: Arial, Helvetica, sans-serif;
+              body, html{
+                height: 100%;
+              }
+              .wrapper {
+                height: 100%;
+                position: relative;
+              }
+              .chat__content {
+                width: 100%;
+                height: 100%;
+              }
+              .content__col--left {
+                width: 80%;
+                height: 100%;
+                float: left;
+                display: inline-block;
+              }
+              .content__col--right {
+                width: 20%;
+                height: 100%;
+                float: left;
+                display: inline-block;
+                border-left: thick double #ccffcc;
+              }
+
+
+              .message-form { 
+                padding: 3px; position: fixed; bottom: 0;
               }
               ul{
                 list-style-type: none;
                }
-               .welcome-screen{
-                  visibility: hidden;
+              .chat-area{
+                background-image: url('background_numbers.jpg');
+                color: white;
+                font-size: 200%;
+                font-style: italic;
+                font-family: Arial, Helvetica, sans-serif;
+                width: 100%;
+                height: 100%;
+               }
+              .chat-info{
+                background-color: #618685;
+                width: 100%;
+                height: 100%;
+               }
+               .container-fluid{
+                height: 100%;
                }
 
         </style>
   </head>
+
   <body>
-    <ul id="messages"></ul>
+    <div class="wrapper">
+    <div class="chat__content">
+      <div class="content__col--left">
+        <ul class="chat-area"></ul>
+      </div>
+      <div class="content__col--right">
+        <div class="chat-info"></div>
+      </div>
+    </div>
     <form class="message-form">
         <div class="input-group">
-            <input id="input" class="form-control"/>
-            <span class="input-group-btn">
-                <button class="btn btn-success">Send</button>
-            </span>
+          <input id="input" class="form-control"/>
+          <span class="input-group-btn">
+              <button class="btn btn-success">Send</button>
+          </span>
         </div>
     </form>
+  </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -39,16 +84,19 @@
 
       $(function () {
         var socket = io();
+
+        //creating another room
+        // socket.emit('create', 'room_test');
+
         $('.message-form').submit(function(){
           socket.emit('chat message', $('#input').val());
           $('#input').val('');
           return false;
         });
         socket.on('chat message', function(msg){
-          $('#messages').append($('<li>').text(msg));
+          $('.chat-area').append($('<li>').text(msg));
         });
 
-        // //but where is socket sending the data out to?
         // socket.on('news', function (data) {
         //     console.log(data);
         //     socket.emit('my other event', { my: 'data' });

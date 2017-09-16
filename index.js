@@ -11,27 +11,34 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
 var username; 
+var rooms = ["room1"];
 
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/welcome_page.html');
 });
 
 app.post('/homepage', function(req, res){
-
   username = req.body.user.name;
-
   res.sendFile(__dirname + '/index.html');
 });
 
+
+
 io.on('connection', function(socket){
+
+  var currentRoom = rooms[0];
+  socket.join(currentRoom);
+
+  socket.on('create', function (room) {
+    console.log(room);
+  });
 
   socket.on('chat message', function(msg){
   	// socket.emit('news', {hello: 'world'});
-
     if(!username){
       username = "me";
     }
-    socket.emit('chat message', username +": " +msg);
+    io.sockets.in(currentRoom).emit('chat message', username +": " +msg);
   });
 
   socket.on('disconnect', function(msg){
