@@ -43,10 +43,12 @@
                 list-style-type: none;
                }
                .chat-area li{
+                opacity: 0;
                 animation-name: fade-in;
-                animation-duration: 3s;
+                animation-duration: 1s;
                 animation-timing-function: ease-out;
                 animation-iteration-count: 1;
+                animation-fill-mode: forwards;
                }
               .chat-info{
                 background-color: black;
@@ -63,14 +65,20 @@
                 bottom: 0;
                }
 
-               @keyframes fade-in {
-                20%, 8.3% { left: -100%; opacity: 0; }
-                8.3%,25% { left: 25%; opacity: 1; }              
+                @keyframes fade-in {
+                0% { opacity: 0; }
+                100% { opacity: 1; }              
                 }
 
                 .current-room{
                   text-align: center;
                   font-size: 50px; 
+                }
+
+                .open-dropdown{
+                  height: 50px;
+                  color: black;
+                  font-size: 30px;
                 }
 
         </style>
@@ -84,8 +92,13 @@
       </div>
       <div class="content__col--right">
         <div class="chat-info">
-          <div class="current-room"> 
+
+          <div class="dropdown"> 
+            <button class="open-dropdown btn btn-block btn-success dropdown-toggle" type="button" data-toggle="dropdown"><span class="caret"></span></button> 
+            <ul class="dropdown-menu">
+            </ul> 
           </div> 
+
         </div>
       </div>
     </div>
@@ -110,10 +123,15 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
 
+      var socket = io();
+
+        var changeChannel = function(room){
+          // room = room.trim();
+          console.log(room);
+        };
+
       $(function () {
-        var socket = io();
-
-
+        
         //user is typing
         $(document).on("keypress", function (e) {
           if(e.which==13){
@@ -129,10 +147,6 @@
         });
 
 
-        //data can be sent directly from html here to index.js
-        //creating another room
-        // socket.emit('create', 'room_test');
-
         //sending chat messages
         $('.message-form').submit(function(){
           socket.emit('chat message', $('#input').val());
@@ -140,13 +154,31 @@
           return false;
         });
 
+
+        $('.dropdown-menu').on('click', '.room_item', function() {
+          var roomName = $(this).data('room');
+          socket.emit('room change', roomName);
+        });
+
+
+
         socket.on('chat message', function(msg){
           $('.chat-area').append($('<li>').text(msg));
         });
 
         //getting client info
+        //get info about rooms and users inside them 
         socket.on('client info', function(data) {
-          $('.current-room').text(data[0]);
+          console.log('emitted');
+          var list = '';
+          $('.open-dropdown').html(data[0]);
+          for(var i = 1 ; i<data.length; i++){
+              var x = data[i];
+              var li = '<li data-room="'+x+'" class="room_item"><a href="#">'+data[i]+'</a></li>';
+              list += li;
+          }
+          console.log(list);
+          $('.dropdown-menu').html(list);
         });
 
       });

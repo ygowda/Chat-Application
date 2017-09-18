@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
 var username; 
-var rooms = ["room1"];
+var rooms = ["room 1", "room 2", "room 3"];
 
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/welcome_page.html');
@@ -36,11 +36,9 @@ io.on('connection', function(socket){
   }
 
   socket.join(currentRoom);
+  clientInfoEmmiter(currentRoom);
 
   // console.log(io.sockets.sockets);
-
-  var roomData = [];
-  roomData.push(currentRoom);
 
 
   //user sends message
@@ -49,8 +47,16 @@ io.on('connection', function(socket){
     
   });
 
-  //client data not being rendered properly
-  io.sockets.in(currentRoom).emit('client info', roomData);
+  //sends client info about the room and people in them
+  function clientInfoEmmiter(room) {
+    var rooms = ["room 1", "room 2", "room 3"];
+    var i = rooms.indexOf(room);
+    rooms.splice(i, 1);
+    rooms.sort();
+    rooms.unshift(room);
+    io.sockets.in(room).emit('client info', rooms);
+  }
+  
 
 
   //user is typing
@@ -61,8 +67,16 @@ io.on('connection', function(socket){
     io.sockets.in(currentRoom).emit('typing', data);
   }); 
 
+  //changing room
+  socket.on('room change', function(room){
+    currentRoom = room;
+    socket.join(currentRoom);
+
+    clientInfoEmmiter(currentRoom);
+  });
 
 
+  //socket is disconnected
   socket.on('disconnect', function(msg){
     socket.emit('user disonnected', msg);
   });
