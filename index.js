@@ -27,19 +27,41 @@ app.post('/homepage', function(req, res){
 io.on('connection', function(socket){
 
   var currentRoom = rooms[0];
+
+  if(!username){
+      socket.name = socket.id;
+  }
+  else{
+    socket.name = username;
+  }
+
   socket.join(currentRoom);
 
-  socket.on('create', function (room) {
-    console.log(room);
+  // console.log(io.sockets.sockets);
+
+  var roomData = [];
+  roomData.push(currentRoom);
+
+
+  //user sends message
+  socket.on('chat message', function(msg){
+    io.sockets.in(currentRoom).emit('chat message', socket.name +": " +msg);
+    
   });
 
-  socket.on('chat message', function(msg){
-  	// socket.emit('news', {hello: 'world'});
-    if(!username){
-      username = "me";
+  //client data not being rendered properly
+  io.sockets.in(currentRoom).emit('client info', roomData);
+
+
+  //user is typing
+  socket.on('typing', function(data){
+    if(data != ""){
+      data = socket.name + data;
     }
-    io.sockets.in(currentRoom).emit('chat message', username +": " +msg);
-  });
+    io.sockets.in(currentRoom).emit('typing', data);
+  }); 
+
+
 
   socket.on('disconnect', function(msg){
     socket.emit('user disonnected', msg);

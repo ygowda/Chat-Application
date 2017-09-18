@@ -24,7 +24,21 @@
 			transform: translateY(100%);
 			font-size: 60px;
 			text-align: center;
-
+		}
+		.blinking-cursor {
+			font-weight: 100;
+			font-size: 30px;
+			text-align: center;
+			color: #d9ecd0;
+			-webkit-animation: 1s blink step-end infinite;
+		}
+		@-webkit-keyframes "blink" {
+		  from, to {
+		    color: transparent;
+		  }
+		  50% {
+		    color: black;
+		  }
 		}
 
 	</style> 
@@ -37,7 +51,10 @@
 <!-- 		        <form id="form-input" action="/homepage" method="post" onsubmit="validateInput()"> 
  -->
         <form id="form-input"  action="/" onsubmit="validateInput()"> 
-          <input id="username-input" type="text" name="user[name]"/> 
+           
+          <span class="blinking-cursor">|
+          </span>
+          <input id="username-input" type="text" name="user[name]" class="blinking-cursor"/>
 <!--           <select class="form-control"><option>default</option></select>
  -->        </form> 
     </div>
@@ -47,8 +64,11 @@
 
 <script> 
 
+       $(document).on("keypress", function (e) {
+       		$('.blinking-cursor').text("");
+       });
+
       function validateInput(){
-        	console.log('hi');
         var x = $('#username-input').val();
         if(x==''){
           alert("Please enter a valid username");
