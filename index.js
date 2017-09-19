@@ -62,7 +62,6 @@ io.on('connection', function(socket){
 
     clientInfoEmmiter(currentRoom);
   }
-  
 
 
   //user is typing
