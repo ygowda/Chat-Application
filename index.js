@@ -40,7 +40,6 @@ io.on('connection', function(socket){
 
   // console.log(io.sockets.sockets);
 
-
   //user sends message
   socket.on('chat message', function(msg){
     io.sockets.in(currentRoom).emit('chat message', socket.name +": " +msg);
@@ -49,12 +48,19 @@ io.on('connection', function(socket){
 
   //sends client info about the room and people in them
   function clientInfoEmmiter(room) {
-    var rooms = ["room 1", "room 2", "room 3"];
     var i = rooms.indexOf(room);
     rooms.splice(i, 1);
     rooms.sort();
     rooms.unshift(room);
     io.sockets.in(room).emit('client info', rooms);
+  }
+
+  //changes the current room
+  function roomChange(room){
+    currentRoom = room;
+    socket.join(currentRoom);
+
+    clientInfoEmmiter(currentRoom);
   }
   
 
@@ -69,11 +75,16 @@ io.on('connection', function(socket){
 
   //changing room
   socket.on('room change', function(room){
-    currentRoom = room;
-    socket.join(currentRoom);
-
-    clientInfoEmmiter(currentRoom);
+    roomChange(room);
   });
+
+  //add room
+  socket.on('add room', function(newRoom){
+    if(rooms.indexOf(newRoom) == -1 || rooms.length ==5){
+      rooms.push(newRoom);
+      roomChange(newRoom);
+    }
+  })
 
 
   //socket is disconnected

@@ -81,11 +81,28 @@
                   font-size: 30px;
                 }
 
+                .modal{
+                  color: black;
+                  height: 500px;
+                  width: 500px;
+                  left: 30%;
+/*                  right: 50%;
+*/                  top: 20%;
+/*                  bottom: 50%;
+*/                }
+
         </style>
   </head>
 
   <body>
     <div class="wrapper">
+    <div id="addClassModal" class="modal">
+      <div class="modal-content"> 
+        <p>Please enter the name of the new room you want to create</p>
+          <input id="modal-input" class="form-control"></input>
+          <button id="submit-room" class="btn btn-success">Submit<button>  
+      </div>      
+    </div> 
     <div class="chat__content">
       <div class="content__col--left">
         <ul class="chat-area"></ul>
@@ -98,7 +115,7 @@
             <ul class="dropdown-menu">
             </ul> 
           </div> 
-
+          <button class="add-room btn btn-block" style="bottom: 0;">Add room +</button> 
         </div>
       </div>
     </div>
@@ -123,14 +140,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
 
-      var socket = io();
-
-        var changeChannel = function(room){
-          // room = room.trim();
-          console.log(room);
-        };
 
       $(function () {
+
+        var socket = io();
         
         //user is typing
         $(document).on("keypress", function (e) {
@@ -154,22 +167,20 @@
           return false;
         });
 
+        socket.on('chat message', function(msg){
+          $('.chat-area').append($('<li>').text(msg));
+        });
 
+
+        //changing rooms
         $('.dropdown-menu').on('click', '.room_item', function() {
           var roomName = $(this).data('room');
           socket.emit('room change', roomName);
         });
 
-
-
-        socket.on('chat message', function(msg){
-          $('.chat-area').append($('<li>').text(msg));
-        });
-
         //getting client info
         //get info about rooms and users inside them 
         socket.on('client info', function(data) {
-          console.log('emitted');
           var list = '';
           $('.open-dropdown').html(data[0]);
           for(var i = 1 ; i<data.length; i++){
@@ -177,9 +188,24 @@
               var li = '<li data-room="'+x+'" class="room_item"><a href="#">'+data[i]+'</a></li>';
               list += li;
           }
-          console.log(list);
           $('.dropdown-menu').html(list);
         });
+
+        //add room
+        $('.add-room').click(function(){
+          $('#addClassModal').modal('show');
+        });
+
+        $('#submit-room').click(function(){
+          addRoom();
+          $('#addClassModal').modal('hide')
+        });
+
+        function addRoom(){
+          var newRoom = $('#modal-input').val();
+          socket.emit('add room', newRoom);
+        }
+
 
       });
     </script>
